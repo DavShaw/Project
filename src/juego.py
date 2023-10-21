@@ -5,12 +5,12 @@ import threading
 import time
 import os
 import json
-
+from clases.Personajes import Enemigos, Heroe, Entidades
 
 
 # Variables para acceder a rutas del src
 script_dir = os.path.dirname(__file__)
-next_dir = os.path.join(script_dir, 'resources', 'background_4.png')
+next_dir = os.path.join(script_dir, 'resources', 'background_5.png')
 
 def cargar_json(nombre_archivo, datos_default = None):
     if not os.path.exists(nombre_archivo):
@@ -46,7 +46,12 @@ icono = os.path.join(script_dir, 'resources', 'enemigo.png')
 icono = pygame.image.load(icono)
 pygame.display.set_icon(icono)
 
-coordenadas_enemigos = []
+lista_enemigos = []
+jugador = Heroe()
+jugador.cambiar_x(valores_predeterminados["pantalla_tamano"][0] // 2)
+jugador.cambiar_y(valores_predeterminados["pantalla_tamano"][1] - 50)
+jugador.cambiar_radio(valores_predeterminados["radio_jugador"])
+jugador.cambiar_velocidad(valores_predeterminados["velocidad_jugador"])
 fondo = pygame.image.load(next_dir)
 fondo = pygame.transform.scale(fondo, valores_predeterminados["pantalla_tamano"])
 
@@ -54,50 +59,58 @@ puntos_obtenidos = 0
 coordenadas_jugador = [(valores_predeterminados["pantalla_tamano"][0] // 2), valores_predeterminados["pantalla_tamano"][1] - 50]
 
 
+
+
 reloj = pygame.time.Clock()
 
-def jugador_sobre_enemigo(jugador_coords, enemigo_coords):
-    distancia = ((jugador_coords[0] - enemigo_coords[0]) ** 2 + (jugador_coords[1] - enemigo_coords[1]) ** 2) ** 0.5
-    return distancia <= (valores_predeterminados["radio_jugador"] + valores_predeterminados["radio_enemigo"])
+def jugador_sobre_enemigo(jugador: Heroe, enemigo: Enemigos):
+    
+    distancia = ((jugador.x - enemigo.x) ** 2 + (jugador.y - enemigo.y) ** 2) ** 0.5
+    return distancia <= (jugador.radio + enemigo.radio)
 
-def generar_posiciones_enemigo():
+def generar_enemigos():
     x = random.randint(0, valores_predeterminados["pantalla_tamano"][0])
     y = random.randint(0, valores_predeterminados["pantalla_tamano"][1])
-    coordenadas_enemigos.append([x, y])
-    return [x, y]
+    
+    enemigo = Enemigos()
+    enemigo.cambiar_velocidad(valores_predeterminados["velocidad_enemigo"])
+    enemigo.cambiar_x(x)
+    enemigo.cambiar_y(y)
 
-def supero_limites(coordenadas):
-    return coordenadas[1] > valores_predeterminados["pantalla_tamano"][1]
+    lista_enemigos.append(enemigo)
+    return enemigo
 
-def reiniciar_enemigo(coordenadas):
-    coordenadas[0] = random.randint(0, valores_predeterminados["pantalla_tamano"][0])
-    coordenadas[1] = 0
+def supero_limites(personaje: Entidades):
+    return personaje.y > valores_predeterminados["pantalla_tamano"][1]
 
-def mover_enemigo(coordenadas):
-    coordenadas[1] += valores_predeterminados["velocidad_enemigo"]
+def reiniciar_enemigo(enemigo: Enemigos):
+    enemigo.x = random.randint(0, valores_predeterminados["pantalla_tamano"][0])
+    enemigo.y = 0
+
+def mover_enemigo(enemigo: Enemigos):
+    enemigo.mover()
 
 def aparecer_enemigo():
-    for coords in coordenadas_enemigos:
-        next_dir = os.path.join(script_dir, 'resources', 'enemigo.png')
-        imagen_enemigo = pygame.image.load(next_dir)
-        ancho = 3 * valores_predeterminados["radio_enemigo"]
-        alto = 3 * valores_predeterminados["radio_enemigo"]
-        imagen_enemigo = pygame.transform.scale(imagen_enemigo, (ancho, alto))
-        pantalla.blit(imagen_enemigo, (coords[0] - valores_predeterminados["radio_enemigo"], coords[1] - valores_predeterminados["radio_enemigo"]))
+    for enemigo in lista_enemigos:
 
+        enemigo.cambiar_imagen("enemigo_5.png")
+        enemigo.cambiar_radio(valores_predeterminados["radio_enemigo"])
+        enemigo.transformar_imagen(3*enemigo.radio, 3*enemigo.radio)
+        enemigo.cambiar_pantalla(pantalla)
+        enemigo.aparecer()
 
-
-        mover_enemigo(coords)
-        if supero_limites(coords):
-            reiniciar_enemigo(coords)
+        mover_enemigo(enemigo)
+        if supero_limites(enemigo):
+            reiniciar_enemigo(enemigo)
 
 def aparecer_jugador():
-    ancho = 3 * valores_predeterminados["radio_jugador"]
-    alto = 3 * valores_predeterminados["radio_jugador"]
-    jugador_imagen = os.path.join(script_dir, 'resources', 'warrior_2.png')
-    jugador_imagen = pygame.image.load(jugador_imagen)
-    jugador_imagen = pygame.transform.scale(jugador_imagen, (ancho, alto))
-    pantalla.blit(jugador_imagen, (coordenadas_jugador[0] - valores_predeterminados["radio_jugador"], coordenadas_jugador[1] - valores_predeterminados["radio_jugador"]))
+    jugador.cambiar_imagen("warrior_2.png")
+    jugador.transformar_imagen(3*jugador.radio, 3*jugador.radio)
+    jugador.cambiar_x(jugador.x)
+    jugador.cambiar_y(jugador.y)
+    jugador.cambiar_pantalla(pantalla)
+    jugador.cambiar_pantalla_tamano(1000, 800)
+    jugador.aparecer()
 
 def evento_tocar_enemigo():
     cerrar()
@@ -105,40 +118,17 @@ def evento_tocar_enemigo():
 def x_pulsada(evento):
     return evento.type == pygame.QUIT
 
-def mover_jugador(evento):
-    global tecla_izquierda_presionada, tecla_derecha_presionada
+def mover_jugador_izquierda(jugador: Heroe):
+    jugador.mover_jugador_izquierda()
 
-    if evento.type == pygame.KEYDOWN:
-        if evento.key == pygame.K_LEFT:
-            tecla_izquierda_presionada = True
-        elif evento.key == pygame.K_RIGHT:
-            tecla_derecha_presionada = True
-
-    elif evento.type == pygame.KEYUP:
-        if evento.key == pygame.K_LEFT:
-            tecla_izquierda_presionada = False
-        elif evento.key == pygame.K_RIGHT:
-            tecla_derecha_presionada = False
-            
-    if tecla_izquierda_presionada:
-        mover_jugador_izquierda()
-    if tecla_derecha_presionada:
-        mover_jugador_derecha()
-
-def mover_jugador_izquierda():
-    if coordenadas_jugador[0] - valores_predeterminados["velocidad_jugador"] >= 0:
-        coordenadas_jugador[0] -= valores_predeterminados["velocidad_jugador"]
-
-def mover_jugador_derecha():
-    if coordenadas_jugador[0] + valores_predeterminados["radio_jugador"] * 2 + valores_predeterminados["velocidad_jugador"] <= valores_predeterminados["pantalla_tamano"][0]:
-        coordenadas_jugador[0] += valores_predeterminados["velocidad_jugador"]
+def mover_jugador_derecha(jugador: Heroe):
+    jugador.mover_jugador_derecha()
 
 def sumar_puntos(multiplicador = valores_predeterminados["multiplicador_puntos"], segundos = valores_predeterminados["ticks_puntos"]):
     global puntos_obtenidos
     while True:
         puntos_obtenidos += 1 * multiplicador
         time.sleep(segundos)
-        print(round(puntos_obtenidos, 1))
 
 def hilo_sumar_puntos(multiplicador_puntos = valores_predeterminados["multiplicador_puntos"], ticks_puntos = valores_predeterminados["ticks_puntos"]):
     t = threading.Thread(target=sumar_puntos, args=(multiplicador_puntos, ticks_puntos))
@@ -180,30 +170,27 @@ def jugar():
 
         # Si la tecla izquierda está presionada, mover el jugador a la izquierda
         if keys[pygame.K_LEFT]:
-            mover_jugador_izquierda()
+            mover_jugador_izquierda(jugador)
 
         # Si la tecla derecha está presionada, mover el jugador a la derecha
         if keys[pygame.K_RIGHT]:
-            mover_jugador_derecha()
+            mover_jugador_derecha(jugador)
+            
 
         pantalla.blit(fondo, (0, 0))
 
-        if len(coordenadas_enemigos) < valores_predeterminados["cantidad_enemigos"]:
-            generar_posiciones_enemigo()
+        if len(lista_enemigos) < valores_predeterminados["cantidad_enemigos"]:
+            generar_enemigos()
 
-        for enemigo_coords in coordenadas_enemigos:
-            if jugador_sobre_enemigo(coordenadas_jugador, enemigo_coords):
+        for enemigo in lista_enemigos:
+            if jugador_sobre_enemigo(jugador, enemigo):
                 evento_tocar_enemigo()
 
         aparecer_enemigo()
         aparecer_jugador()
-
         pygame.display.flip()
 
         reloj.tick(30)
-
-        print(puntos_obtenidos)
-        print(supero_el_maximo())
 
 
 jugar()
