@@ -5,12 +5,16 @@ import tkinter.font as tkFont
 
 class App:
     def __init__(self, root):
+        bg_color = "#F59682"
+
         # Datos para mostrar en el Entry
         self.datos = self.cargar_json("database")
         self.root = root
 
+        self.root.config(bg = bg_color)
+
         #setting title
-        self.root.title("undefined")
+        self.root.title("Opciones")
         #setting window size
         self.width=395
         self.height=736
@@ -72,6 +76,7 @@ class App:
         self.GLabel_681["justify"] = "center"
         self.GLabel_681["text"] = "Pantalla (Ancho)"
         self.GLabel_681.place(x=70,y=30,width=102,height=30)
+        self.GLabel_681.config(bg = bg_color)
 
         self.GLabel_202=tk.Label(root)
         ft = tkFont.Font(family='Times',size=10)
@@ -80,6 +85,7 @@ class App:
         self.GLabel_202["justify"] = "center"
         self.GLabel_202["text"] = "Pantalla (Alto)"
         self.GLabel_202.place(x=70,y=80,width=84,height=30)
+        self.GLabel_202.config(bg = bg_color)
 
         self.GLabel_666=tk.Label(root)
         ft = tkFont.Font(family='Times',size=10)
@@ -88,6 +94,7 @@ class App:
         self.GLabel_666["justify"] = "center"
         self.GLabel_666["text"] = "Velocidad (Enemigo)"
         self.GLabel_666.place(x=80,y=120,width=114,height=30)
+        self.GLabel_666.config(bg = bg_color)
 
         self.GLabel_297=tk.Label(root)
         ft = tkFont.Font(family='Times',size=10)
@@ -96,6 +103,7 @@ class App:
         self.GLabel_297["justify"] = "center"
         self.GLabel_297["text"] = "Velocidad (Heroe)"
         self.GLabel_297.place(x=70,y=170,width=113,height=30)
+        self.GLabel_297.config(bg = bg_color)
 
         self.GLabel_144=tk.Label(root)
         ft = tkFont.Font(family='Times',size=10)
@@ -104,6 +112,7 @@ class App:
         self.GLabel_144["justify"] = "center"
         self.GLabel_144["text"] = "Radio (Enemigo)"
         self.GLabel_144.place(x=70,y=220,width=100,height=30)
+        self.GLabel_144.config(bg = bg_color)
 
         self.GLineEdit_200=tk.Entry(root)
         self.GLineEdit_200["borderwidth"] = "1px"
@@ -121,6 +130,7 @@ class App:
         self.GLabel_761["justify"] = "center"
         self.GLabel_761["text"] = "Radio (Heroe)"
         self.GLabel_761.place(x=70,y=270,width=88,height=30)
+        self.GLabel_761.config(bg = bg_color)
 
         self.GLineEdit_385=tk.Entry(root)
         self.GLineEdit_385["borderwidth"] = "1px"
@@ -138,6 +148,7 @@ class App:
         self.GLabel_609["justify"] = "center"
         self.GLabel_609["text"] = "Cantidad (Enemigos)"
         self.GLabel_609.place(x=70,y=320,width=122,height=30)
+        self.GLabel_609.config(bg = bg_color)
 
         self.GLabel_474=tk.Label(root)
         ft = tkFont.Font(family='Times',size=10)
@@ -146,6 +157,7 @@ class App:
         self.GLabel_474["justify"] = "center"
         self.GLabel_474["text"] = "Multiplicador (Puntos)"
         self.GLabel_474.place(x=70,y=370,width=132,height=30)
+        self.GLabel_474.config(bg = bg_color)
 
         self.GLineEdit_513=tk.Entry(root)
         self.GLineEdit_513["borderwidth"] = "1px"
@@ -163,6 +175,7 @@ class App:
         self.GLabel_994["justify"] = "center"
         self.GLabel_994["text"] = "Ticks (Puntos)"
         self.GLabel_994.place(x=60,y=420,width=109,height=30)
+        self.GLabel_994.config(bg = bg_color)
 
         self.GLineEdit_953=tk.Entry(root)
         self.GLineEdit_953["borderwidth"] = "1px"
@@ -180,6 +193,7 @@ class App:
         self.GLabel_369["justify"] = "center"
         self.GLabel_369["text"] = "Int. aument. Vel. (Enemigo)"
         self.GLabel_369.place(x=80,y=470,width=150,height=30)
+        self.GLabel_369.config(bg = bg_color)
 
         self.GLineEdit_249=tk.Entry(root)
         self.GLineEdit_249["borderwidth"] = "1px"
@@ -197,6 +211,7 @@ class App:
         self.GLabel_305["justify"] = "center"
         self.GLabel_305["text"] = "Aument. Vel. (Enemigo)"
         self.GLabel_305.place(x=80,y=530,width=132,height=30)
+        self.GLabel_305.config(bg = bg_color)
 
         self.GLineEdit_313=tk.Entry(root)
         self.GLineEdit_313["borderwidth"] = "1px"
@@ -268,5 +283,5 @@ class App:
 def run():
     global root
     root = tk.Tk()
-    app = App(root)
+    App(root)
     root.mainloop()

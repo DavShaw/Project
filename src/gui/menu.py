@@ -10,8 +10,14 @@ import juego as game
 
 class App:
     def __init__(self, root):
+
+        bg_color = "#F59682"
+
         #setting title
         root.title("Menú principal")
+
+        root.config(bg = bg_color)
+
         #setting window size
         width=255
         height=372
@@ -30,6 +36,7 @@ class App:
         GButton_697["text"] = "Jugar"
         GButton_697.place(x=70,y=60,width=124,height=33)
         GButton_697["command"] = self.GButton_697_command
+        GButton_697.configure(bg="#FFE1CD")
 
         GButton_480=tk.Button(root)
         GButton_480["bg"] = "#f0f0f0"
@@ -40,6 +47,7 @@ class App:
         GButton_480["text"] = "Opciones"
         GButton_480.place(x=70,y=130,width=125,height=30)
         GButton_480["command"] = self.GButton_480_command
+        GButton_480.configure(bg="#FFE1CD")
 
         GButton_120=tk.Button(root)
         GButton_120["bg"] = "#f0f0f0"
@@ -50,6 +58,7 @@ class App:
         GButton_120["text"] = "Salir"
         GButton_120.place(x=70,y=200,width=123,height=30)
         GButton_120["command"] = self.GButton_120_command
+        GButton_120.configure(bg="#FFE1CD")
 
         GLabel_194=tk.Label(root)
         ft = tkFont.Font(family='Times',size=10)
@@ -58,6 +67,7 @@ class App:
         GLabel_194["justify"] = "center"
         GLabel_194["text"] = "By: David Carrillo Torres"
         GLabel_194.place(x=0,y=340,width=153,height=30)
+        GLabel_194.config(bg = bg_color)
 
     def GButton_697_command(self):
         print("Boton: Jugar")
@@ -77,7 +87,8 @@ class App:
 def run():
     global root
     root = tk.Tk()
-    app = App(root)
+    App(root)
     root.mainloop()
 
-run()
+if __name__ == "__main__":
+    run()

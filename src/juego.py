@@ -179,8 +179,6 @@ def mostrar_ventana_emergente():
     ventana_emergente.mainloop()
 
 def evento_tocar_enemigo():
-    from gui.menu import run as menu_runner
-
     detener_juego()
     mostrar_ventana_emergente()
     actualizar_racha()
