@@ -66,14 +66,18 @@ class App:
 
 
     def GButton_480_command(self):
-        print("Boton: Opciones")
-
+        from opciones import run as optionrunner
+        root.destroy()
+        optionrunner()
 
     def GButton_120_command(self):
         print("Boton: Salir")
         root.destroy()
 
-if __name__ == "__main__":
+def run():
+    global root
     root = tk.Tk()
     app = App(root)
     root.mainloop()
+
+run()

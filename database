@@ -1,16 +1,16 @@
 {
     "pantalla_tamano": [
-        1000,
-        800
+        1000.0,
+        800.0
     ],
-    "racha_maxima": 1.5000000000000002,
-    "velocidad_enemigo": 5,
-    "velocidad_jugador": 15,
-    "radio_enemigo": 15,
-    "radio_jugador": 25,
-    "cantidad_enemigos": 12,
+    "racha_maxima": 4.799999999999999,
+    "velocidad_enemigo": 1.0,
+    "velocidad_jugador": 15.0,
+    "radio_enemigo": 15.0,
+    "radio_jugador": 25.0,
+    "cantidad_enemigos": 12.0,
     "multiplicador_puntos": 0.3,
     "ticks_puntos": 0.35,
-    "velocidad_enemigo_incrementar_en_intervalo": 60,
-    "velocidad_enemigo_incremento": 0.5
+    "velocidad_enemigo_incrementar_en_intervalo": 1.0,
+    "velocidad_enemigo_incremento": 2.0
 }

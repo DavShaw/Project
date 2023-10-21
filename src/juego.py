@@ -1,3 +1,5 @@
+import tkinter
+import tkinter as tk
 import pygame
 import random
 import sys
@@ -25,7 +27,6 @@ valores_predeterminados = {
 "velocidad_enemigo_incrementar_en_intervalo": 60,
 "velocidad_enemigo_incremento": 0.2
 }
-
 
 
 # Variables de PyGame
@@ -164,11 +165,33 @@ def mostrar_puntuacion():
     coordenadas = (10,10)
     pantalla.blit(texto_surface, coordenadas)
 
-def evento_tocar_enemigo():
-    cerrar()
+def mostrar_ventana_emergente():
+    ventana_emergente = tk.Tk()
+    ventana_emergente.title("Mensaje")
 
+    label = tk.Label(ventana_emergente, text="Has perdido... ¡Inténtalo nuevamente!")
+    label.pack(pady=20)
+
+    ok_button = tk.Button(ventana_emergente, text="OK", command=ventana_emergente.destroy)
+    ok_button.pack()
+
+    ventana_emergente.geometry("300x150+400+200")  # Ajusta el tamaño y la posición
+    ventana_emergente.mainloop()
+
+def evento_tocar_enemigo():
+    from gui.menu import run as menu_runner
+
+    detener_juego()
+    mostrar_ventana_emergente()
+    actualizar_racha()
+    cerrar()
+    
 def x_pulsada(evento):
     return evento.type == pygame.QUIT
+
+def actualizar_racha():
+    if supero_el_maximo():
+            cambiar_maximo()
 
 def mover_jugador_izquierda(jugador: Heroe):
     jugador.mover_jugador_izquierda()
@@ -176,14 +199,14 @@ def mover_jugador_izquierda(jugador: Heroe):
 def mover_jugador_derecha(jugador: Heroe):
     jugador.mover_jugador_derecha()
 
-def sumar_puntos(multiplicador = valores_predeterminados["multiplicador_puntos"], segundos = valores_predeterminados["ticks_puntos"]):
+def sumar_puntos():
     global puntos_obtenidos
     while True:
-        puntos_obtenidos += 1 * multiplicador
-        time.sleep(segundos)
+        puntos_obtenidos += 1 * valores_predeterminados["multiplicador_puntos"]
+        time.sleep(valores_predeterminados["ticks_puntos"])
 
-def hilo_sumar_puntos(multiplicador_puntos = valores_predeterminados["multiplicador_puntos"], ticks_puntos = valores_predeterminados["ticks_puntos"]):
-    t = threading.Thread(target=sumar_puntos, args=(multiplicador_puntos, ticks_puntos))
+def hilo_sumar_puntos():
+    t = threading.Thread(target=sumar_puntos)
     t.daemon = True
     t.start()
 
@@ -204,10 +227,11 @@ def hilo_incrementar_velocidad_enemigo():
     t.start()
     
 def cerrar():
-    if(supero_el_maximo):
-        cambiar_maximo()
-    pygame.quit()
     sys.exit(0)
+
+def detener_juego():
+    valores_predeterminados["multiplicador_puntos"] = 0
+    pygame.quit()
 
 def guardar_json(nombre_archivo, datos):
     with open(nombre_archivo, 'w') as archivo:
