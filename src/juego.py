@@ -3,6 +3,13 @@ import random
 import sys
 import threading
 import time
+import os
+
+
+# Variables para acceder a rutas del src
+script_dir = os.path.dirname(__file__)
+next_dir = os.path.join(script_dir, 'resources', 'background.jpg')
+
 
 # Definición de variables
 pantalla_tamano = (1000, 800)
@@ -17,7 +24,7 @@ diccionario_colores = {
     }
 
 # Variables de juego
-fondo = pygame.image.load('background.jpg')
+fondo = pygame.image.load(next_dir)
 fondo = pygame.transform.scale(fondo, pantalla_tamano)
 tecla_izquierda_presionada = False
 tecla_derecha_presionada = False
@@ -32,6 +39,8 @@ ticks_puntos = 0.1
 
 # Variables de PyGame
 pantalla = pygame.display.set_mode(pantalla_tamano)
+pygame.display.set_caption("Don't Touch the Bones")
+
 reloj = pygame.time.Clock()
 
 def jugador_sobre_enemigo(jugador_coords, enemigo_coords):
@@ -56,7 +65,8 @@ def mover_enemigo(coordenadas):
 
 def aparecer_enemigo():
     for coords in coordenadas_enemigos:
-        imagen_enemigo = pygame.image.load('enemigo.png')
+        next_dir = os.path.join(script_dir, 'resources', 'enemigo.png')
+        imagen_enemigo = pygame.image.load(next_dir)
         ancho = 3 * radio_enemigo
         alto = 3 * radio_enemigo
         imagen_enemigo = pygame.transform.scale(imagen_enemigo, (ancho, alto))
@@ -115,37 +125,37 @@ def hilo_sumar_puntos(multiplicador_puntos = multiplicador_puntos, ticks_puntos 
 def cerrar():
     sys.exit(0)
 
-# Iniciar ciclo de reinicio de pantalla
-hilo_sumar_puntos()
 
+def main():
+    hilo_sumar_puntos()
 
-while True:
-    for evento in pygame.event.get():
-        if x_pulsada(evento):
-            cerrar()
+    while True:
+        for evento in pygame.event.get():
+            if x_pulsada(evento):
+                cerrar()
 
-    # Obtener el estado de las teclas
-    keys = pygame.key.get_pressed()
+        # Obtener el estado de las teclas
+        keys = pygame.key.get_pressed()
 
-    # Si la tecla izquierda está presionada, mover el jugador a la izquierda
-    if keys[pygame.K_LEFT]:
-        mover_jugador_izquierda()
+        # Si la tecla izquierda está presionada, mover el jugador a la izquierda
+        if keys[pygame.K_LEFT]:
+            mover_jugador_izquierda()
 
-    # Si la tecla derecha está presionada, mover el jugador a la derecha
-    if keys[pygame.K_RIGHT]:
-        mover_jugador_derecha()
+        # Si la tecla derecha está presionada, mover el jugador a la derecha
+        if keys[pygame.K_RIGHT]:
+            mover_jugador_derecha()
 
-    pantalla.blit(fondo, (0, 0))
+        pantalla.blit(fondo, (0, 0))
 
-    if len(coordenadas_enemigos) < cantidad_enemigos:
-        generar_posiciones_enemigo()
+        if len(coordenadas_enemigos) < cantidad_enemigos:
+            generar_posiciones_enemigo()
 
-    for enemigo_coords in coordenadas_enemigos:
-        if jugador_sobre_enemigo(coordenadas_jugador, enemigo_coords):
-            evento_tocar_enemigo()
+        for enemigo_coords in coordenadas_enemigos:
+            if jugador_sobre_enemigo(coordenadas_jugador, enemigo_coords):
+                evento_tocar_enemigo()
 
-    aparecer_enemigo()
-    aparecer_jugador()
+        aparecer_enemigo()
+        aparecer_jugador()
 
-    pygame.display.flip()
-    reloj.tick(30)
+        pygame.display.flip()
+        reloj.tick(30)

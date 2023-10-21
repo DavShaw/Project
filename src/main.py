@@ -1,0 +1,2 @@
+import juego
+juego.main()
