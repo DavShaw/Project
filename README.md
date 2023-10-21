@@ -34,5 +34,3 @@ En este emocionante proyecto, un intrépido aventurero se encuentra en una lucha
 - (Documentación) https://www.pygame.org/docs/
 - (Documentación) https://docs.python.org/3/library/tk.html
 - (Software) https://visualtk.com/
-```
-python python main.py
