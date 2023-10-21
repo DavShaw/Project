@@ -1,109 +1,149 @@
-import pygame, sys, random, os
+import pygame
+import random
+import sys
+import threading
+import time
 
-
-# - - - Definición de variables - - - #
-
-# Variables globales (Generales)
+# Definición de variables
 coordenadas_enemigos = []
+coordenadas_jugador = [100,100]
 diccionario_colores = {
     "negro": (0, 0, 0),
     "blanco": (255, 255, 255),
     "rojo": (255, 0, 0),
     "verde": (0, 255, 0),
     "azul": (0, 0, 255),
-    "yellow": (255, 255, 0),
-    "cian": (0, 255, 255),
-    "magenta": (255, 0, 255),
-    "naranja": (255, 165, 0),
-    "morado": (128, 0, 128),
-    "gris": (128, 128, 128),
-    "marron": (165, 42, 42),
-    "rosa": (255, 182, 193),
-    "lima": (50, 205, 50),
-    "dorado": (255, 215, 0),
-    "SILVER": (192, 192, 192)
     }
 
-# Variables globales (Juego)
+# Variables de juego
+tecla_izquierda_presionada = False
+tecla_derecha_presionada = False
+puntos_obtenidos = 0
 velocidad_enemigo = 5
+velocidad_jugador = 3
 radio_enemigo = 10
+radio_jugador = 10
 color_enemigo = diccionario_colores["rojo"]
-cantidad_enemigos = 30
+cantidad_enemigos = 5
 
-# Variables globales (PyGame)
+# Variables de PyGame
 pantalla_tamano = (1000, 800)
 pantalla = pygame.display.set_mode(pantalla_tamano)
 reloj = pygame.time.Clock()
 
+def jugador_sobre_enemigo(jugador_coords, enemigo_coords):
+    distancia = ((jugador_coords[0] - enemigo_coords[0]) ** 2 + (jugador_coords[1] - enemigo_coords[1]) ** 2) ** 0.5
+    return distancia <= (radio_jugador + radio_enemigo)
 
-def jugador_sobre_enemigo(jugador_coords, enemigo_coords) -> bool:
-
-    # Fórmula matemática de la distancia entre dos puntos 
-    x_distancia_al_enemigo = abs(jugador_coords[0] - enemigo_coords[0])
-    y_distancia_al_enemigo = abs(jugador_coords[1] - enemigo_coords[1])
-    
-    # ¿El jugador está sobre algún enemigo?
-    return x_distancia_al_enemigo < radio_enemigo and y_distancia_al_enemigo < radio_enemigo
-
-def generar_posiciones_enemigo() -> list:
-    # Asignar x,y como componentes de un punto (generados en el intervalo de la pantalla)
+def generar_posiciones_enemigo():
     x = random.randint(0, pantalla_tamano[0])
     y = random.randint(0, pantalla_tamano[1])
+    coordenadas_enemigos.append([x, y])
+    return [x, y]
 
-    # Agregar coordenadas del enemigo en la lista
-    coordenadas_enemigos.append([x,y])
+def supero_limites(coordenadas):
+    return coordenadas[1] > pantalla_tamano[1]
 
-    # Retornar nuevas coordenadas del spawn de un enemigo
-    return [x,y]
-    
-def generar_enemigos():
+def reiniciar_enemigo(coordenadas):
+    coordenadas[0] = random.randint(0, pantalla_tamano[0])
+    coordenadas[1] = 0
 
+def mover_enemigo(coordenadas):
+    coordenadas[1] += velocidad_enemigo
+
+def aparecer_enemigo():
     for coords in coordenadas_enemigos:
+        imagen_enemigo = pygame.image.load('enemigo.png')
+        ancho = 3 * radio_enemigo
+        alto = 3 * radio_enemigo
+        imagen_enemigo = pygame.transform.scale(imagen_enemigo, (ancho, alto))
+        pantalla.blit(imagen_enemigo, (coords[0] - radio_enemigo, coords[1] - radio_enemigo))
+        mover_enemigo(coords)
+        if supero_limites(coords):
+            reiniciar_enemigo(coords)
 
-        # Spawnear enemigos
-        pygame.draw.circle(pantalla, color_enemigo, coords, radio_enemigo)
+def aparecer_jugador():
+    pygame.draw.circle(pantalla, diccionario_colores["verde"], coordenadas_jugador, radio_jugador)
 
-        # Mover enemigos
-        coords[1] += velocidad_enemigo
 
-        # Obtener coordenadas del jugador
-        (x,y) = pygame.mouse.get_pos()
-        player_coords = [x,y]
-
-        if coords[1] > pantalla_tamano[1]:
-             coords[1] = 0
-
-        if jugador_sobre_enemigo(player_coords, coords):
-            print("Graveee")
-            coords[0] = 0
-            coords[1] = 0
-    
 def evento_tocar_enemigo():
-    pass 
+    print("Hola xd")
 
-def aparecer_enemigos():
-    for i in range(cantidad_enemigos):
-        generar_posiciones_enemigo()
-    
 def x_pulsada(evento):
-    return evento.type in [pygame.QUIT]
+    return evento.type == pygame.QUIT
+
+def mover_jugador(evento):
+    global tecla_izquierda_presionada, tecla_derecha_presionada
+
+    if evento.type == pygame.KEYDOWN:
+        if evento.key == pygame.K_LEFT:
+            tecla_izquierda_presionada = True
+        elif evento.key == pygame.K_RIGHT:
+            tecla_derecha_presionada = True
+            
+    elif evento.type == pygame.KEYUP:
+        if evento.key == pygame.K_LEFT:
+            tecla_izquierda_presionada = False
+        elif evento.key == pygame.K_RIGHT:
+            tecla_derecha_presionada = False
+
+    # Actualiza la posición del jugador según las teclas presionadas
+    if tecla_izquierda_presionada:
+        mover_jugador_izquierda()
+    if tecla_derecha_presionada:
+        mover_jugador_derecha()
+
+
+
+def mover_jugador_izquierda():
+    coordenadas_jugador[0] -= velocidad_jugador  # Mover a la izquierda restando la velocidad
+
+def mover_jugador_derecha():
+    coordenadas_jugador[0] += velocidad_jugador  # Mover a la derecha sumando la velocidad
+
+
+def sumar_puntos(multiplicador = 1, segundos = 1):
+    global puntos_obtenidos
+    while True:
+        puntos_obtenidos += 1 * multiplicador
+        time.sleep(segundos)
+
+def hilo_sumar_puntos(multiplicador, segundos):
+    t = threading.Thread(target=sumar_puntos, args=(multiplicador, segundos))
+    t.daemon = True
+    t.start()
 
 def cerrar():
     sys.exit(0)
 
-aparecer_enemigos()
-
-# Iniciar ciclo de refresco de pantalla
+# Iniciar ciclo de reinicio de pantalla
+hilo_sumar_puntos(0.5, 1.5)
 while True:
+
+    # Obtención de eventos
     for evento in pygame.event.get():
+
+        # Si se detecta un evento de click en la x del juego
         if x_pulsada(evento):
             cerrar()
-        
-    # Nivel de indentación para tener los eventos
-    pantalla.fill(diccionario_colores["cian"])
 
-    generar_enemigos()
+        # Si se detecta un evento de pulsaciones de teclas
+        if evento.type in [pygame.KEYDOWN, pygame.KEYUP]:
+            mover_jugador(evento)
         
+
+    pantalla.fill(diccionario_colores["blanco"])
+
+    if len(coordenadas_enemigos) < cantidad_enemigos:
+        generar_posiciones_enemigo()
+
+    for enemigo_coords in coordenadas_enemigos:
+        if jugador_sobre_enemigo(coordenadas_jugador, enemigo_coords):
+            evento_tocar_enemigo()
+
+
+    aparecer_enemigo()
+    aparecer_jugador()
+
     pygame.display.flip()
-    reloj.tick(30)
-
+    reloj.tick(60)
