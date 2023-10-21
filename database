@@ -3,8 +3,8 @@
         1000,
         800
     ],
-    "racha_maxima": 0,
-    "velocidad_enemigo": 1,
+    "racha_maxima": 4.000000000000002,
+    "velocidad_enemigo": 5,
     "velocidad_jugador": 20,
     "radio_enemigo": 10,
     "radio_jugador": 5,

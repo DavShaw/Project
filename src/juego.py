@@ -14,7 +14,15 @@ from button import Button
 script_dir = os.path.dirname(__file__)
 next_dir = os.path.join(script_dir, 'resources', 'background_4.png')
 
-
+def cargar_json(nombre_archivo, datos_default = None):
+    if not os.path.exists(nombre_archivo):
+        if datos_default is not None:
+            return datos_default
+        else:
+            return valores_predeterminados
+    else:
+        with open(nombre_archivo, 'r') as archivo:
+            return json.load(archivo)
 
 
 # Variables a persistir
@@ -29,6 +37,8 @@ valores_predeterminados = {
     "multiplicador_puntos": 0.1,
     "ticks_puntos": 0.1
 }
+
+valores_predeterminados = cargar_json("database", valores_predeterminados)
 
 # Variables de PyGame
 pantalla = pygame.display.set_mode(valores_predeterminados["pantalla_tamano"])
@@ -138,32 +148,29 @@ def hilo_sumar_puntos(multiplicador_puntos = valores_predeterminados["multiplica
     t.start()
     
 def cerrar():
+    if(supero_el_maximo()):
+        cambiar_maximo()
     pygame.quit()
     sys.exit(0)
-
-def cargar_json(nombre_archivo, datos_default = valores_predeterminados):
-    if not os.path.exists(nombre_archivo):
-        if datos_default is not None:
-            return datos_default
-        else:
-            return {}
-    else:
-        with open(nombre_archivo, 'r') as archivo:
-            return json.load(archivo)
 
 def guardar_json(nombre_archivo, datos):
     with open(nombre_archivo, 'w') as archivo:
         json.dump(datos, archivo, indent=4)
 
-def tomar_persistencia(nombre_archivo, valores_predeterminados):
-    try:
-        cargar_json(nombre_archivo)
-    except FileNotFoundError:
-        return valores_predeterminados
+def supero_el_maximo():
+    data = cargar_json("database", valores_predeterminados)
+    if data["racha_maxima"] < puntos_obtenidos:
+        return True
+    return False
+
+def cambiar_maximo():
+    datos = cargar_json("database", valores_predeterminados)
+    datos["racha_maxima"] = puntos_obtenidos
+    guardar_json("database", datos)
 
 def jugar():
+    valores_predeterminados = cargar_json("database")
     hilo_sumar_puntos()
-    tomar_persistencia("database", valores_predeterminados)
 
     while True:
         for evento in pygame.event.get():
@@ -196,5 +203,8 @@ def jugar():
         pygame.display.flip()
         reloj.tick(30)
 
-data = cargar_json("database")
-print(data)
+        print(puntos_obtenidos)
+        print(supero_el_maximo())
+
+
+jugar()
