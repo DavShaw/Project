@@ -1,4 +1,3 @@
-from button import Button
 import pygame
 import random
 import sys
@@ -7,7 +6,6 @@ import time
 import os
 import json
 
-from button import Button
 
 
 # Variables para acceder a rutas del src
@@ -102,8 +100,8 @@ def aparecer_jugador():
     pantalla.blit(jugador_imagen, (coordenadas_jugador[0] - valores_predeterminados["radio_jugador"], coordenadas_jugador[1] - valores_predeterminados["radio_jugador"]))
 
 def evento_tocar_enemigo():
-    print("Hola xd")
-
+    cerrar()
+    
 def x_pulsada(evento):
     return evento.type == pygame.QUIT
 
@@ -148,7 +146,7 @@ def hilo_sumar_puntos(multiplicador_puntos = valores_predeterminados["multiplica
     t.start()
     
 def cerrar():
-    if(supero_el_maximo()):
+    if(supero_el_maximo):
         cambiar_maximo()
     pygame.quit()
     sys.exit(0)
@@ -201,6 +199,7 @@ def jugar():
         aparecer_jugador()
 
         pygame.display.flip()
+
         reloj.tick(30)
 
         print(puntos_obtenidos)

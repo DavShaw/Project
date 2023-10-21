@@ -3,12 +3,12 @@
         1000,
         800
     ],
-    "racha_maxima": 4.000000000000002,
-    "velocidad_enemigo": 5,
-    "velocidad_jugador": 20,
-    "radio_enemigo": 10,
-    "radio_jugador": 5,
-    "cantidad_enemigos": 15,
-    "multiplicador_puntos": 0.1,
+    "racha_maxima": 80,
+    "velocidad_enemigo": 25,
+    "velocidad_jugador": 40,
+    "radio_enemigo": 0.1,
+    "radio_jugador": 25,
+    "cantidad_enemigos": 55,
+    "multiplicador_puntos": 5,
     "ticks_puntos": 0.1
 }
