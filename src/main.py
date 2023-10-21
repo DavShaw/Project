@@ -1,2 +1,3 @@
 import juego
-juego.main()
+juego.jugar()
+juego.cerrar()

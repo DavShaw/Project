@@ -1,14 +1,18 @@
+from button import Button
 import pygame
 import random
 import sys
 import threading
 import time
 import os
+import json
+
+from button import Button
 
 
 # Variables para acceder a rutas del src
 script_dir = os.path.dirname(__file__)
-next_dir = os.path.join(script_dir, 'resources', 'background.jpg')
+next_dir = os.path.join(script_dir, 'resources', 'background_4.png')
 
 
 # Definición de variables
@@ -32,7 +36,7 @@ puntos_obtenidos = 0
 velocidad_enemigo = 5
 velocidad_jugador = 10
 radio_enemigo = 10
-radio_jugador = 10
+radio_jugador = 20
 cantidad_enemigos = 15
 multiplicador_puntos = 0.1
 ticks_puntos = 0.1
@@ -40,6 +44,12 @@ ticks_puntos = 0.1
 # Variables de PyGame
 pantalla = pygame.display.set_mode(pantalla_tamano)
 pygame.display.set_caption("Don't Touch the Bones")
+
+icono = os.path.join(script_dir, 'resources', 'enemigo.png')
+icono = pygame.image.load(icono)
+
+# Establece el ícono de la ventana
+pygame.display.set_icon(icono)
 
 reloj = pygame.time.Clock()
 
@@ -71,12 +81,20 @@ def aparecer_enemigo():
         alto = 3 * radio_enemigo
         imagen_enemigo = pygame.transform.scale(imagen_enemigo, (ancho, alto))
         pantalla.blit(imagen_enemigo, (coords[0] - radio_enemigo, coords[1] - radio_enemigo))
+
+
+
         mover_enemigo(coords)
         if supero_limites(coords):
             reiniciar_enemigo(coords)
 
 def aparecer_jugador():
-    pygame.draw.circle(pantalla, diccionario_colores["verde"], coordenadas_jugador, radio_jugador)
+    ancho = 3 * radio_jugador
+    alto = 3 * radio_jugador
+    jugador_imagen = os.path.join(script_dir, 'resources', 'warrior_2.png')
+    jugador_imagen = pygame.image.load(jugador_imagen)
+    jugador_imagen = pygame.transform.scale(jugador_imagen, (ancho, alto))
+    pantalla.blit(jugador_imagen, (coordenadas_jugador[0] - radio_jugador, coordenadas_jugador[1] - radio_jugador))
 
 def evento_tocar_enemigo():
     print("Hola xd")
@@ -105,10 +123,12 @@ def mover_jugador(evento):
         mover_jugador_derecha()
 
 def mover_jugador_izquierda():
-    coordenadas_jugador[0] -= velocidad_jugador
+    if coordenadas_jugador[0] - velocidad_jugador >= 0:
+        coordenadas_jugador[0] -= velocidad_jugador
 
 def mover_jugador_derecha():
-    coordenadas_jugador[0] += velocidad_jugador 
+    if coordenadas_jugador[0] + radio_jugador * 2 + velocidad_jugador <= pantalla_tamano[0]:
+        coordenadas_jugador[0] += velocidad_jugador
 
 def sumar_puntos(multiplicador = multiplicador_puntos, segundos = ticks_puntos):
     global puntos_obtenidos
@@ -123,10 +143,25 @@ def hilo_sumar_puntos(multiplicador_puntos = multiplicador_puntos, ticks_puntos 
     t.start()
     
 def cerrar():
+    pygame.quit()
     sys.exit(0)
 
+def cargar_json(nombre_archivo, datos_default=None):
+    if not os.path.exists(nombre_archivo):
+        if datos_default is not None:
+            return datos_default
+        else:
+            return {}
+    else:
+        with open(nombre_archivo, 'r') as archivo:
+            return json.load(archivo)
 
-def main():
+def guardar_json(nombre_archivo, datos):
+    with open(nombre_archivo, 'w') as archivo:
+        json.dump(datos, archivo, indent=4)
+
+
+def jugar():
     hilo_sumar_puntos()
 
     while True:
@@ -159,3 +194,13 @@ def main():
 
         pygame.display.flip()
         reloj.tick(30)
+
+
+
+
+
+
+
+
+
+
