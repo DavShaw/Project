@@ -23,11 +23,12 @@ tecla_izquierda_presionada = False
 tecla_derecha_presionada = False
 puntos_obtenidos = 0
 velocidad_enemigo = 5
-velocidad_jugador = 3
+velocidad_jugador = 10
 radio_enemigo = 10
 radio_jugador = 10
-color_enemigo = diccionario_colores["rojo"]
 cantidad_enemigos = 15
+multiplicador_puntos = 0.1
+ticks_puntos = 0.1
 
 # Variables de PyGame
 pantalla = pygame.display.set_mode(pantalla_tamano)
@@ -67,7 +68,6 @@ def aparecer_enemigo():
 def aparecer_jugador():
     pygame.draw.circle(pantalla, diccionario_colores["verde"], coordenadas_jugador, radio_jugador)
 
-
 def evento_tocar_enemigo():
     print("Hola xd")
 
@@ -88,38 +88,35 @@ def mover_jugador(evento):
             tecla_izquierda_presionada = False
         elif evento.key == pygame.K_RIGHT:
             tecla_derecha_presionada = False
-
-    # Actualiza la posición del jugador según las teclas presionadas
+            
     if tecla_izquierda_presionada:
         mover_jugador_izquierda()
     if tecla_derecha_presionada:
         mover_jugador_derecha()
 
-
-
 def mover_jugador_izquierda():
-    coordenadas_jugador[0] -= velocidad_jugador  # Mover a la izquierda restando la velocidad
+    coordenadas_jugador[0] -= velocidad_jugador
 
 def mover_jugador_derecha():
-    coordenadas_jugador[0] += velocidad_jugador  # Mover a la derecha sumando la velocidad
+    coordenadas_jugador[0] += velocidad_jugador 
 
-
-def sumar_puntos(multiplicador = 1, segundos = 1):
+def sumar_puntos(multiplicador = multiplicador_puntos, segundos = ticks_puntos):
     global puntos_obtenidos
     while True:
         puntos_obtenidos += 1 * multiplicador
         time.sleep(segundos)
+        print(round(puntos_obtenidos, 1))
 
-def hilo_sumar_puntos(multiplicador, segundos):
-    t = threading.Thread(target=sumar_puntos, args=(multiplicador, segundos))
+def hilo_sumar_puntos(multiplicador_puntos = multiplicador_puntos, ticks_puntos = ticks_puntos):
+    t = threading.Thread(target=sumar_puntos, args=(multiplicador_puntos, ticks_puntos))
     t.daemon = True
     t.start()
-
+    
 def cerrar():
     sys.exit(0)
 
 # Iniciar ciclo de reinicio de pantalla
-hilo_sumar_puntos(0.5, 1.5)
+hilo_sumar_puntos()
 
 
 while True:
@@ -151,4 +148,4 @@ while True:
     aparecer_jugador()
 
     pygame.display.flip()
-    reloj.tick(60)
+    reloj.tick(30)
