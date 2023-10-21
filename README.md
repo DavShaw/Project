@@ -13,6 +13,8 @@ En este emocionante proyecto, un intrépido aventurero se encuentra en una lucha
 - Utilizará conceptos y técnicas de programación en Python para crear una experiencia dinámica y emocionante.
 - Se brindará una jugabilidad cautivadora y desafiante.
 
+- (Video explicativo) https://www.youtube.com/watch?v=sPDO3AIdXSg
+
 ## Instrucciones de Uso
 
 1. Clona o descarga este repositorio en tu computadora.
