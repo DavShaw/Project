@@ -39,6 +39,8 @@ valores_predeterminados = {
 valores_predeterminados = cargar_json("database", valores_predeterminados)
 
 # Variables de PyGame
+pygame.font.init()  # Inicializa el módulo de fuentes de Pygame
+
 pantalla = pygame.display.set_mode(valores_predeterminados["pantalla_tamano"])
 pygame.display.set_caption("Don't Touch the Bones")
 
@@ -62,6 +64,7 @@ coordenadas_jugador = [(valores_predeterminados["pantalla_tamano"][0] // 2), val
 
 
 reloj = pygame.time.Clock()
+
 
 def jugador_sobre_enemigo(jugador: Heroe, enemigo: Enemigos):
     
@@ -111,6 +114,16 @@ def aparecer_jugador():
     jugador.cambiar_pantalla(pantalla)
     jugador.cambiar_pantalla_tamano(1000, 800)
     jugador.aparecer()
+
+
+
+def mostrar_puntuacion(pantalla, texto, tamano, x, y):
+    font = pygame.font.Font(None, tamano)  # Utilizamos la fuente predeterminada
+    text_surface = font.render(texto, True, (255, 255, 255))  # Creamos la superficie del texto
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)  # Alineamos el texto en la parte superior central
+    pantalla.blit(text_surface, text_rect)  # Mostramos el texto en la pantalla
+
 
 def evento_tocar_enemigo():
     cerrar()
@@ -164,6 +177,10 @@ def jugar():
         for evento in pygame.event.get():
             if x_pulsada(evento):
                 cerrar()
+
+        # Mostrar la puntuación
+        puntuacion_texto = f"Score: {int(puntos_obtenidos)}"
+        mostrar_puntuacion(pantalla, puntuacion_texto, 36, 500,50)
 
         # Obtener el estado de las teclas
         keys = pygame.key.get_pressed()

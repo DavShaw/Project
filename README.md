@@ -4,20 +4,31 @@
 
 ## Descripción del Proyecto
 
-Este proyecto consiste en la implementación de un juego interactivo en Python. El juego se desarrolla en un pequeño mapa donde un aventurero se enfrentará a una serie de desafíos y obstáculos con el objetivo de llegar al final del mapa. 
+En este emocionante proyecto, un intrépido aventurero se encuentra en una lucha por su vida, escapando desesperadamente de las garras de los temibles esqueletos de la muerte en un mundo de plano 2D que se ha convertido en su prisión.
 
 ## Características del Proyecto
 
 - El juego se ejecutará en Python.
-- El mapa contendrá obstáculos y desafíos que el aventurero deberá superar.
-- Se utilizarán conceptos y técnicas de programación en Python para desarrollar la lógica del juego.
-- Se proporcionará una experiencia interactiva y entretenida para el jugador.
+- Los esqueletos de la muerte acechan al aventurero en un entorno en 2D.
+- Utilizará conceptos y técnicas de programación en Python para crear una experiencia dinámica y emocionante.
+- Se brindará una jugabilidad cautivadora y desafiante.
 
 ## Instrucciones de Uso
 
 1. Clona o descarga este repositorio en tu computadora.
 2. Asegúrate de tener Python instalado.
 3. Ejecuta el juego en tu entorno de desarrollo Python.
+
+## Bibliografía
+
+- (Midjourney) https://www.midjourney.com/ 
+- (DALLE-2) https://labs.openai.com/
+- (Software) https://www.remove.bg/
+- (Documentación) https://stackoverflow.com/
+- (Software) https://github.com/ParthJadhav/Tkinter-Designer
+- (Figma) https://www.figma.com/
+- (Documentación) https://www.pygame.org/docs/
+- (Documentación) https://docs.python.org/3/library/tk.html
 
 ```
 python python main.py
