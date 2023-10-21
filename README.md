@@ -21,6 +21,8 @@ En este emocionante proyecto, un intrépido aventurero se encuentra en una lucha
 
 ## Bibliografía
 
+- (Seguimiento) https://wakatime.com/@DavShaw/projects/tlpyojkelp?start=2023-10-15&end=2023-10-21
+
 - (Midjourney) https://www.midjourney.com/ 
 - (DALLE-2) https://labs.openai.com/
 - (Software) https://www.remove.bg/
@@ -29,6 +31,6 @@ En este emocionante proyecto, un intrépido aventurero se encuentra en una lucha
 - (Figma) https://www.figma.com/
 - (Documentación) https://www.pygame.org/docs/
 - (Documentación) https://docs.python.org/3/library/tk.html
-
+- (Software) https://visualtk.com/
 ```
 python python main.py

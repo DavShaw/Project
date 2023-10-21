@@ -7,10 +7,89 @@ import os
 import json
 from clases.Personajes import Enemigos, Heroe, Entidades
 
-
 # Variables para acceder a rutas del src
 script_dir = os.path.dirname(__file__)
 next_dir = os.path.join(script_dir, 'resources', 'background_5.png')
+
+# Variables a persistir
+valores_predeterminados = {
+"pantalla_tamano": (1000, 800),
+"racha_maxima": 0,
+"velocidad_enemigo": 5,
+"velocidad_jugador": 10,
+"radio_enemigo": 10,
+"radio_jugador": 20,
+"cantidad_enemigos": 15,
+"multiplicador_puntos": 0.1,
+"ticks_puntos": 0.1,
+"velocidad_enemigo_incrementar_en_intervalo": 60,
+"velocidad_enemigo_incremento": 0.2
+}
+
+
+
+# Variables de PyGame
+pantalla = None
+icono = None
+lista_enemigos = None
+jugador = None
+fondo = None
+puntos_obtenidos = None
+coordenadas_jugador = None
+reloj = None
+
+def variables_de_inicio():
+
+    global valores_predeterminados
+    global pantalla
+    global icono
+    global lista_enemigos
+    global jugador
+    global fondo
+    global puntos_obtenidos
+    global coordenadas_jugador
+    global reloj
+
+    # Variables a persistir
+    valores_predeterminados = {
+        "pantalla_tamano": (1000, 800),
+        "racha_maxima": 0,
+        "velocidad_enemigo": 5,
+        "velocidad_jugador": 10,
+        "radio_enemigo": 10,
+        "radio_jugador": 20,
+        "cantidad_enemigos": 15,
+        "multiplicador_puntos": 0.1,
+        "ticks_puntos": 0.1,
+        "velocidad_enemigo_incrementar_en_intervalo": 60,
+        "velocidad_enemigo_incremento": 0.2
+    }
+
+    valores_predeterminados = cargar_json("database", valores_predeterminados)
+
+    # Variables de PyGame
+    pygame.font.init()  # Inicializa el módulo de fuentes de Pygame
+
+    pantalla = pygame.display.set_mode(valores_predeterminados["pantalla_tamano"])
+    pygame.display.set_caption("Don't Touch the Bones")
+
+    icono = os.path.join(script_dir, 'resources', 'enemigo.png')
+    icono = pygame.image.load(icono)
+    pygame.display.set_icon(icono)
+
+    lista_enemigos = []
+    jugador = Heroe()
+    jugador.cambiar_x(valores_predeterminados["pantalla_tamano"][0] // 2)
+    jugador.cambiar_y(valores_predeterminados["pantalla_tamano"][1] - 50)
+    jugador.cambiar_radio(valores_predeterminados["radio_jugador"])
+    jugador.cambiar_velocidad(valores_predeterminados["velocidad_jugador"])
+    fondo = pygame.image.load(next_dir)
+    fondo = pygame.transform.scale(fondo, valores_predeterminados["pantalla_tamano"])
+
+    puntos_obtenidos = 0
+    coordenadas_jugador = [(valores_predeterminados["pantalla_tamano"][0] // 2), valores_predeterminados["pantalla_tamano"][1] - 50]
+
+    reloj = pygame.time.Clock()
 
 def cargar_json(nombre_archivo, datos_default = None):
     if not os.path.exists(nombre_archivo):
@@ -22,50 +101,6 @@ def cargar_json(nombre_archivo, datos_default = None):
         with open(nombre_archivo, 'r') as archivo:
             return json.load(archivo)
 
-
-# Variables a persistir
-valores_predeterminados = {
-    "pantalla_tamano": (1000, 800),
-    "racha_maxima": 0,
-    "velocidad_enemigo": 5,
-    "velocidad_jugador": 10,
-    "radio_enemigo": 10,
-    "radio_jugador": 20,
-    "cantidad_enemigos": 15,
-    "multiplicador_puntos": 0.1,
-    "ticks_puntos": 0.1
-}
-
-valores_predeterminados = cargar_json("database", valores_predeterminados)
-
-# Variables de PyGame
-pygame.font.init()  # Inicializa el módulo de fuentes de Pygame
-
-pantalla = pygame.display.set_mode(valores_predeterminados["pantalla_tamano"])
-pygame.display.set_caption("Don't Touch the Bones")
-
-icono = os.path.join(script_dir, 'resources', 'enemigo.png')
-icono = pygame.image.load(icono)
-pygame.display.set_icon(icono)
-
-lista_enemigos = []
-jugador = Heroe()
-jugador.cambiar_x(valores_predeterminados["pantalla_tamano"][0] // 2)
-jugador.cambiar_y(valores_predeterminados["pantalla_tamano"][1] - 50)
-jugador.cambiar_radio(valores_predeterminados["radio_jugador"])
-jugador.cambiar_velocidad(valores_predeterminados["velocidad_jugador"])
-fondo = pygame.image.load(next_dir)
-fondo = pygame.transform.scale(fondo, valores_predeterminados["pantalla_tamano"])
-
-puntos_obtenidos = 0
-coordenadas_jugador = [(valores_predeterminados["pantalla_tamano"][0] // 2), valores_predeterminados["pantalla_tamano"][1] - 50]
-
-
-
-
-reloj = pygame.time.Clock()
-
-
 def jugador_sobre_enemigo(jugador: Heroe, enemigo: Enemigos):
     
     distancia = ((jugador.x - enemigo.x) ** 2 + (jugador.y - enemigo.y) ** 2) ** 0.5
@@ -75,13 +110,20 @@ def generar_enemigos():
     x = random.randint(0, valores_predeterminados["pantalla_tamano"][0])
     y = random.randint(0, valores_predeterminados["pantalla_tamano"][1])
     
-    enemigo = Enemigos()
-    enemigo.cambiar_velocidad(valores_predeterminados["velocidad_enemigo"])
-    enemigo.cambiar_x(x)
-    enemigo.cambiar_y(y)
+    if generacion_valida(x,y,600):
+        enemigo = Enemigos()
+        enemigo.cambiar_velocidad(valores_predeterminados["velocidad_enemigo"])
+        enemigo.cambiar_x(x)
+        enemigo.cambiar_y(y)
 
-    lista_enemigos.append(enemigo)
-    return enemigo
+        lista_enemigos.append(enemigo)
+
+def generacion_valida(x_enemigo, y_enemigo, distancia_minima = 5):
+    distancia_x = abs(jugador.x - x_enemigo)
+    distancia_y = abs(jugador.y - y_enemigo)
+    if distancia_x <= distancia_minima and distancia_y <= distancia_minima:
+        return False
+    return True
 
 def supero_limites(personaje: Entidades):
     return personaje.y > valores_predeterminados["pantalla_tamano"][1]
@@ -115,19 +157,16 @@ def aparecer_jugador():
     jugador.cambiar_pantalla_tamano(1000, 800)
     jugador.aparecer()
 
-
-
-def mostrar_puntuacion(pantalla, texto, tamano, x, y):
-    font = pygame.font.Font(None, tamano)  # Utilizamos la fuente predeterminada
-    text_surface = font.render(texto, True, (255, 255, 255))  # Creamos la superficie del texto
-    text_rect = text_surface.get_rect()
-    text_rect.midtop = (x, y)  # Alineamos el texto en la parte superior central
-    pantalla.blit(text_surface, text_rect)  # Mostramos el texto en la pantalla
-
+def mostrar_puntuacion():
+    texto = f"Puntos: {round(puntos_obtenidos,1)} - Record: {round(valores_predeterminados['racha_maxima'],1)}"
+    fuente = pygame.font.Font(None, 36)
+    texto_surface = fuente.render(texto, True, (255, 255, 255))
+    coordenadas = (10,10)
+    pantalla.blit(texto_surface, coordenadas)
 
 def evento_tocar_enemigo():
     cerrar()
-    
+
 def x_pulsada(evento):
     return evento.type == pygame.QUIT
 
@@ -147,6 +186,22 @@ def hilo_sumar_puntos(multiplicador_puntos = valores_predeterminados["multiplica
     t = threading.Thread(target=sumar_puntos, args=(multiplicador_puntos, ticks_puntos))
     t.daemon = True
     t.start()
+
+def incrementar_velocidad_enemigo(ticks, incremento):
+    while True:
+        time.sleep(ticks)
+        valores_predeterminados["velocidad_enemigo"] += incremento
+        velocidad = valores_predeterminados["velocidad_enemigo"]
+        for enemigo in lista_enemigos:
+            enemigo.cambiar_velocidad(velocidad)
+
+def hilo_incrementar_velocidad_enemigo():
+    segundos = valores_predeterminados["velocidad_enemigo_incrementar_en_intervalo"]
+    incremento = valores_predeterminados["velocidad_enemigo_incremento"]
+
+    t = threading.Thread(target=incrementar_velocidad_enemigo, args=(segundos, incremento))
+    t.daemon = True
+    t.start()
     
 def cerrar():
     if(supero_el_maximo):
@@ -157,6 +212,12 @@ def cerrar():
 def guardar_json(nombre_archivo, datos):
     with open(nombre_archivo, 'w') as archivo:
         json.dump(datos, archivo, indent=4)
+
+def invisible():
+    pantalla = pygame.display.set_mode((0,0))
+
+def visible():
+    pantalla = pygame.display.set_mode(valores_predeterminados["pantalla_tamano"])
 
 def supero_el_maximo():
     data = cargar_json("database", valores_predeterminados)
@@ -171,30 +232,23 @@ def cambiar_maximo():
 
 def jugar():
     valores_predeterminados = cargar_json("database")
+    variables_de_inicio()
     hilo_sumar_puntos()
+    hilo_incrementar_velocidad_enemigo()
 
     while True:
         for evento in pygame.event.get():
             if x_pulsada(evento):
                 cerrar()
 
-        # Mostrar la puntuación
-        puntuacion_texto = f"Score: {int(puntos_obtenidos)}"
-        mostrar_puntuacion(pantalla, puntuacion_texto, 36, 500,50)
-
-        # Obtener el estado de las teclas
+        # Funciones lógicas (No gráficas)
         keys = pygame.key.get_pressed()
 
-        # Si la tecla izquierda está presionada, mover el jugador a la izquierda
         if keys[pygame.K_LEFT]:
             mover_jugador_izquierda(jugador)
 
-        # Si la tecla derecha está presionada, mover el jugador a la derecha
         if keys[pygame.K_RIGHT]:
             mover_jugador_derecha(jugador)
-            
-
-        pantalla.blit(fondo, (0, 0))
 
         if len(lista_enemigos) < valores_predeterminados["cantidad_enemigos"]:
             generar_enemigos()
@@ -203,11 +257,12 @@ def jugar():
             if jugador_sobre_enemigo(jugador, enemigo):
                 evento_tocar_enemigo()
 
+        # Funciones no lógicas (Gráficas)
+        pantalla.blit(fondo, (0, 0))
+
         aparecer_enemigo()
         aparecer_jugador()
+        mostrar_puntuacion()
         pygame.display.flip()
 
         reloj.tick(30)
-
-
-jugar()
