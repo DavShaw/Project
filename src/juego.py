@@ -17,6 +17,8 @@ diccionario_colores = {
     }
 
 # Variables de juego
+fondo = pygame.image.load('background.jpg')
+fondo = pygame.transform.scale(fondo, pantalla_tamano)
 tecla_izquierda_presionada = False
 tecla_derecha_presionada = False
 puntos_obtenidos = 0
@@ -25,7 +27,7 @@ velocidad_jugador = 3
 radio_enemigo = 10
 radio_jugador = 10
 color_enemigo = diccionario_colores["rojo"]
-cantidad_enemigos = 5
+cantidad_enemigos = 15
 
 # Variables de PyGame
 pantalla = pygame.display.set_mode(pantalla_tamano)
@@ -136,7 +138,7 @@ while True:
     if keys[pygame.K_RIGHT]:
         mover_jugador_derecha()
 
-    pantalla.fill(diccionario_colores["blanco"])
+    pantalla.blit(fondo, (0, 0))
 
     if len(coordenadas_enemigos) < cantidad_enemigos:
         generar_posiciones_enemigo()
