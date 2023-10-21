@@ -1,0 +1,14 @@
+{
+    "pantalla_tamano": [
+        1000,
+        800
+    ],
+    "racha_maxima": 0,
+    "velocidad_enemigo": 1,
+    "velocidad_jugador": 20,
+    "radio_enemigo": 10,
+    "radio_jugador": 5,
+    "cantidad_enemigos": 15,
+    "multiplicador_puntos": 0.1,
+    "ticks_puntos": 0.1
+}
