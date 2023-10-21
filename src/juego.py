@@ -5,8 +5,9 @@ import threading
 import time
 
 # Definición de variables
+pantalla_tamano = (1000, 800)
 coordenadas_enemigos = []
-coordenadas_jugador = [100,100]
+coordenadas_jugador = [(pantalla_tamano[0] // 2), pantalla_tamano[1] - 50]
 diccionario_colores = {
     "negro": (0, 0, 0),
     "blanco": (255, 255, 255),
@@ -27,7 +28,6 @@ color_enemigo = diccionario_colores["rojo"]
 cantidad_enemigos = 5
 
 # Variables de PyGame
-pantalla_tamano = (1000, 800)
 pantalla = pygame.display.set_mode(pantalla_tamano)
 reloj = pygame.time.Clock()
 
@@ -80,7 +80,7 @@ def mover_jugador(evento):
             tecla_izquierda_presionada = True
         elif evento.key == pygame.K_RIGHT:
             tecla_derecha_presionada = True
-            
+
     elif evento.type == pygame.KEYUP:
         if evento.key == pygame.K_LEFT:
             tecla_izquierda_presionada = False
@@ -118,19 +118,23 @@ def cerrar():
 
 # Iniciar ciclo de reinicio de pantalla
 hilo_sumar_puntos(0.5, 1.5)
+
+
 while True:
-
-    # Obtención de eventos
     for evento in pygame.event.get():
-
-        # Si se detecta un evento de click en la x del juego
         if x_pulsada(evento):
             cerrar()
 
-        # Si se detecta un evento de pulsaciones de teclas
-        if evento.type in [pygame.KEYDOWN, pygame.KEYUP]:
-            mover_jugador(evento)
-        
+    # Obtener el estado de las teclas
+    keys = pygame.key.get_pressed()
+
+    # Si la tecla izquierda está presionada, mover el jugador a la izquierda
+    if keys[pygame.K_LEFT]:
+        mover_jugador_izquierda()
+
+    # Si la tecla derecha está presionada, mover el jugador a la derecha
+    if keys[pygame.K_RIGHT]:
+        mover_jugador_derecha()
 
     pantalla.fill(diccionario_colores["blanco"])
 
@@ -140,7 +144,6 @@ while True:
     for enemigo_coords in coordenadas_enemigos:
         if jugador_sobre_enemigo(coordenadas_jugador, enemigo_coords):
             evento_tocar_enemigo()
-
 
     aparecer_enemigo()
     aparecer_jugador()
