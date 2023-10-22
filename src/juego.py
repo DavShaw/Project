@@ -235,12 +235,6 @@ def guardar_json(nombre_archivo, datos):
     with open(nombre_archivo, 'w') as archivo:
         json.dump(datos, archivo, indent=4)
 
-def invisible():
-    pantalla = pygame.display.set_mode((0,0))
-
-def visible():
-    pantalla = pygame.display.set_mode(valores_predeterminados["pantalla_tamano"])
-
 def supero_el_maximo():
     data = cargar_json("database", valores_predeterminados)
     if data["racha_maxima"] < puntos_obtenidos:
